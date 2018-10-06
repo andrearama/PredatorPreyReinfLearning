@@ -5,7 +5,6 @@ Basically an implementation with some modification of the paper “An Agent-Base
 The work has been explained more in dept in the blog post https://andrearamazzina.com/2018/02/05/reinforcement-learning-in-a-predator-prey-model/
 
 ## Prerequisites
-- Linux or macOS
 - Python 2 or 3
 
 ## Getting Started
