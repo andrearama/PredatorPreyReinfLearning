@@ -16,9 +16,8 @@ import numpy as np
 from GrassAgent import Grass
  
 class Prey :
- 
+
         ptype = -1 #1 if predator, -1 for prey
- 
         age = 0
         epsilon = 0.2
  
@@ -40,6 +39,9 @@ class Prey :
             self.q = 0
   
         def compute_how_many(self,matrix):
+            """
+            Returns the number of the different agents for each neighbor cell
+            """
             how_many = np.zeros([3, 9])  # Grass is nr 0, prey 1 and predator 2.
             iMoore = 0
             for i in [-1, 0, 1]:
@@ -58,7 +60,10 @@ class Prey :
                     iMoore += 1
             return how_many
 
-        def perceive(self,x,y,matrix): #returns the features for a position x,y as a matrix, 9*3.
+        def perceive(self,x,y,matrix): 
+            """
+            Returns the features for a position x,y as a matrix 9x3
+            """
             #Row 1: grass, Row 2: prey, Row 3: predators
             features=np.zeros(12)
             # Count all predators and prey in the world
@@ -66,7 +71,7 @@ class Prey :
             nr_prey=matrix.numPrey
             nr_pred=matrix.numPred
 
-                            # How many agents are at each spot?
+            # How many agents are at each spot?
             how_many=np.zeros([3,9])  # Grass is nr 0, prey 1 and predator 2.
             iMoore=0
             for i in [-1,0,1]:
@@ -84,7 +89,7 @@ class Prey :
                             how_many[2][iMoore]+= 1
                     iMoore +=1
  
-                    # Calculate features. Note this is for a prey
+            # Calculate features. Note: this is for a prey
             if nr_pred != 0:
                 features[0]=sum(how_many[2][:])/nr_pred #pred
             else:
@@ -114,7 +119,9 @@ class Prey :
             return features
 
         def Cells_Evaluation(self,matrix):
-            #evaluate the neighbooring cells
+            """
+            Evaluate the neighbooring cells
+            """
             x=self.x_position
             y=self.y_position
             iMoore=0
@@ -123,7 +130,7 @@ class Prey :
                 for i_y_Moore in [-1,0,1] :
                     x_eval = np.mod(x+i_x_Moore,matrix.xDim) # eval case 0 if agent in case 50
                     y_eval = np.mod(y+i_y_Moore,matrix.yDim)
-                    f_i = self.perceive(x_eval,y_eval,matrix) #self.perceive or perceive ?
+                    f_i = self.perceive(x_eval,y_eval,matrix) 
                     cell_score = np.dot(f_i,self.weights)
                     score[0][iMoore]=x_eval #gives the score and the absolute position
                     score[1][iMoore]=y_eval
@@ -132,6 +139,9 @@ class Prey :
             return score
 
         def Change_Position(self, matrix):
+            """
+            Perform action (i.e. movement) of the agent depending on its evaluations
+            """
             r = np.random.rand()
 
             if r < 1 - self.epsilon:
@@ -158,14 +168,14 @@ class Prey :
             self.lastAte += 1
             return
  
- 
- 
-        #---------------------------Learning part-------------------------------#
-        def Get_Reward(self,matrix): #ToDo
-            #opponent :number of the other species type within the agent’s Moore
-            #neighborhood normalized by the number of total
-            # type is 1 for predator and −1 for prey
-            #same = {0, 1} for if the opponent is on the same location
+#---------------------------Learning part-------------------------------#
+        def Get_Reward(self,matrix): 
+            """
+            opponent :number of the other species type within the agent’s Moore
+            neighborhood normalized by the number of total
+             type is 1 for predator and −1 for prey
+            same = {0, 1} for if the opponent is on the same location
+            """
             type_animal = self.ptype
             how_many = self.compute_how_many(matrix)
             x = self.x_position
@@ -248,7 +258,6 @@ class Prey :
 class Predator:
  
         ptype = 1 #1 if predator, -1 for prey
- 
         age = 0
         epsilon = 0.2
  
@@ -270,6 +279,9 @@ class Predator:
             self.q = 0
  
         def compute_how_many(self,matrix):
+            """
+            Returns the number of the different agents for each neighbor cell
+            """            
             how_many = np.zeros([3, 9])  # Grass is nr 0, prey 1 and predator 2.
             iMoore = 0
             for i in [-1, 0, 1]:
@@ -286,7 +298,10 @@ class Predator:
                     iMoore += 1
             return how_many    
  
-        def perceive(self,x,y,matrix): #returns the features for a position x,y as a matrix, 9*3.
+        def perceive(self,x,y,matrix): 
+            """
+            Returns the features for a position (x,y) as a matrix 9x3
+            """
             #Row 1: grass, Row 2: prey, Row 3: predators
             features=np.zeros(12)
             # Count all predators and prey in the world
@@ -294,7 +309,7 @@ class Predator:
             nr_prey=matrix.numPrey
             nr_pred=matrix.numPred
 
-                            # How many agents are at each spot?
+            # How many agents are at each spot?
             how_many=np.zeros([3,9])  # Grass is nr 0, prey 1 and predator 2.
             iMoore=0
             for i in [-1,0,1]:
@@ -311,7 +326,7 @@ class Predator:
                         else:
                             how_many[2][iMoore]+= 1
                     iMoore +=1
-                    # Calculate features. Note this is for a predator
+            # Calculate features. Note: this is for a predator
             if nr_prey != 0:
                 features[0]=sum(how_many[1][:])/nr_prey  #prey
             else:
@@ -341,7 +356,9 @@ class Predator:
             return features
  
         def Cells_Evaluation(self,matrix):
-            #evaluate the neighbooring cells
+            """
+            Evaluate the neighbooring cells
+            """
             x=self.x_position
             y=self.y_position
             iMoore=0
@@ -359,6 +376,9 @@ class Predator:
             return score
  
         def Change_Position(self,matrix):
+            """
+            Perform action (i.e. movement) of the agent depending on its evaluations
+            """            
             r=np.random.rand()
  
             if r < 1 - self.epsilon:
@@ -386,12 +406,14 @@ class Predator:
             self.lastAte +=1
  
             return
-            #---------------------------Learning part-------------------------------#
-        def Get_Reward(self,matrix): #ToDo
-            #opponent :number of the other species type within the agent’s Moore
-                                #neighborhood normalized by the number of total
-            # type is 1 for predator and −1 for prey
-            #same = {0, 1} for if the opponent is on the same location
+#---------------------------Learning part-------------------------------#
+        def Get_Reward(self,matrix):
+            """
+            opponent :number of the other species type within the agent’s Moore
+            neighborhood normalized by the number of total
+            type is 1 for predator and −1 for prey
+            same = {0, 1} for if the opponent is on the same location
+            """
             type_animal = self.ptype
             how_many = self.compute_how_many(matrix)
             x = self.x_position
