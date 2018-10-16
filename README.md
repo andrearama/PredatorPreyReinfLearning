@@ -17,7 +17,7 @@ pip install -r requirements.txt
 - Clone this repo:
 ```bash
 git clone https://github.com/andrearama/PredatorPreyReinfLearning
-cd pytorch-CycleGAN-and-pix2pix
+cd PredatorPreyReinfLearning
 ```
 
 ### Run the Simulation
